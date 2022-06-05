@@ -1,78 +1,90 @@
-const corpo = document.querySelector('body');
-const title = document.createElement('h1');
-title.id = 'title';
-title.innerText = 'Adivinhe a Cor!';
-corpo.appendChild(title);
+const colorRgb = document.querySelector('#rgb-color');
+const containerBall = document.querySelector('#container-ball');
+const answerText = document.querySelector('#answer');
+const button = document.querySelector('#reset-game');
 
-const section = document.createElement('section');
-corpo.appendChild(section);
-
-
-const rgbText = document.createElement('h3');
-rgbText.className = 'rgb-random'
-section.appendChild(rgbText);
-
-const placar = document.createElement('h4');
-placar.innerText = 'Placar';
-section.appendChild(placar);
-
-const divColor = document.createElement('div');
-divColor.className ='ball-cores';
-section.appendChild(divColor);
-
-
-
-function criarBolas(quantidade, className) {
-    for (let i = 0; i < quantidade; i += 1) {
-        let box = document.createElement('div');
-        box.className = className;
-        box.style.backgroundColor = generateColor();
-        divColor.appendChild(box)
-    }
+function createBalls(quantidade, className) {
+  for (let i = 0; i < quantidade; i += 1) {
+    const balls = document.createElement('div');
+    balls.className = className;
+    balls.style.backgroundColor = generateColor();
+    containerBall.appendChild(balls);
+  }
 }
-criarBolas(6, 'ball');
+createBalls(6, 'ball');
 
 function generateColor() {
-    const letters = '0123456789ABCDEF';
-    let color = '#';
-    for (let i = 0; i < 6; i++) {
-        color += letters[Math.floor(Math.random() * 16)];
-    }
-    return color;
+  const letters = '0123456789ABCDEF';
+  let color = '#';
+  for (let i = 0; i < 6; i += 1) {
+    color += letters[Math.floor(Math.random() * 16)];
+  }
+  return color;
 }
 generateColor();
-
-const pergunta = document.createElement('h3');
-pergunta.id = 'answer';
-pergunta.innerText = 'Escolha uma cor';
-section.appendChild(pergunta);
-
-
+//
 function getRandomColor() {
-    const colorBalls = document.querySelectorAll('.ball');
-    const pergunta = document.querySelector('#answer')
-    const randomRgb = document.querySelector('.rgb-random');
-    for (let i = 0; i < colorBalls.length; i++) {
-        let balls = colorBalls[Math.floor(Math.random() * colorBalls.length)].style.backgroundColor;
-        randomRgb.innerText = balls;
-        colorBalls[i].addEventListener('click', function () {
-            if (randomRgb.innerText === colorBalls[i].style.backgroundColor) {
-                pergunta.innerText = 'Acertou'
-            }
-            else {
-                pergunta.innerText = 'Errou!';
-            }
-        })
-    };
-};
+  const ballRandom = document.querySelectorAll('.ball');
+  for (let i = 0; i < ballRandom.length; i++) {
+    const ballsTwo = ballRandom[Math.floor(Math.random() * ballRandom.length)].style.backgroundColor;
+    colorRgb.innerText = ballsTwo;
+  }
+}
 getRandomColor();
 
-const resetButton = document.createElement('button');
-resetButton.id = 'reset-game';
-resetButton.innerText = 'Resetar Jogo/Cores!'
-section.appendChild(resetButton);
+function compare() {
+  const ballText = document.querySelectorAll('.ball');
+  const pergunta = document.querySelector('#answer');
+  const randomRgb = document.querySelector('#rgb-color');
+  for (let i = 0; i < ballText.length; i += 1) {
+    ballText[i].addEventListener('click', () => {
+      if (randomRgb.innerText === ballText[i].style.backgroundColor) {
+        pergunta.innerText = 'Acertou!';
+      }
+      if (randomRgb.innerText !== ballText[i].style.backgroundColor) {
+        pergunta.innerText = 'Errou! Tente novamente!';
+      }
+    });
+  }
+}
+compare();
 
-resetButton.addEventListener('click', function() {
-    divColor.innerHTML='';
-    criarBolas(6, 'ball')
-})
+function score() {
+  const ballText = document.querySelectorAll('.ball');
+  const pergunta = document.querySelector('#answer');
+  let scoreValue = 0;
+  for (let i = 0; i < ballText.length; i += 1) {
+    ballText[i].addEventListener('click', () => {
+      if (pergunta.innerText === 'Acertou!') {
+        document.querySelector('#score').innerText = scoreValue += 3;
+      }
+    });
+  }
+}
+score();
+
+function newScore () {
+  const ballText2 = document.querySelectorAll('.ball');
+  const pergunta2 = document.querySelector('#answer');
+  let newPoint = parseInt(document.querySelector('#score').innerText)
+  for (let i = 0; i < ballText2.length; i += 1) {
+    ballText2[i].addEventListener('click', () => {
+      if (pergunta2.innerText === 'Acertou!') {
+      document.querySelector('#score').innerText = newPoint += 3;
+      }
+    });
+  }
+}
+
+function clearContainer() {
+  containerBall.innerHTML = '';
+}
+
+button.addEventListener('click', () => {
+  clearContainer();
+  createBalls(6, 'ball');
+  answerText.innerText = 'Escolha uma cor';
+  getRandomColor();
+  compare();
+  newScore();
+});
